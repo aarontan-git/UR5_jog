@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-#this code calculates alternate goal for the arm to reach to correct the orientation properly
-#also 2 stage
-#the output of this code mimics the joystick control that the jog_arm package utilizes (publishes to /joy topic)
 
 import rospy
 import time
@@ -104,10 +101,10 @@ def aruco_jog():
 	aruco_pos_y = aruco_pos_y - y_adj
 	aruco_pos_z = aruco_pos_z - z_adj
 
-        #find position error
-        x_error = aruco_pos_x - ee_pos_x
-        y_error = aruco_pos_y - ee_pos_y
-        z_error = aruco_pos_z - ee_pos_z
+    #find position error
+    x_error = aruco_pos_x - ee_pos_x
+    y_error = aruco_pos_y - ee_pos_y
+    z_error = aruco_pos_z - ee_pos_z
 
 	#find orientation error
 	roll_error = aruco_roll - ee_roll
@@ -127,12 +124,12 @@ def aruco_jog():
 	    pitch_error = 0
 	    yaw_error = 0
 
-        #position control law
-        ee_vel_y = ky*y_error
-        if x_error > 0:
-            ee_vel_x = kx*x_error
-        else:
-            ee_vel_x = kx_back*x_error
+    #position control law
+    ee_vel_y = ky*y_error
+    if x_error > 0:
+        ee_vel_x = kx*x_error
+    else:
+        ee_vel_x = kx_back*x_error
         ee_vel_z = kz*z_error
 
 	#orientation control law
@@ -141,14 +138,14 @@ def aruco_jog():
 	ee_ang_z = pz*yaw_error
 
 	#repackage the velocity values as joy commands to publish
-        j.axes = [-ee_vel_y, ee_vel_z, -ee_vel_x, ee_ang_x, ee_ang_y, -ee_ang_z, 0, 0]    
-        j.buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0]
-        pub.publish(j)
+    j.axes = [-ee_vel_y, ee_vel_z, -ee_vel_x, ee_ang_x, ee_ang_y, -ee_ang_z, 0, 0]    
+    j.buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0]
+    pub.publish(j)
 
 	pub2.publish(y_error1)
 	pub3.publish(z_error1)
 
-        rate.sleep()
+    rate.sleep()
 
     ros.spin()
 
@@ -157,5 +154,3 @@ if __name__ == '__main__':
         aruco_jog()
     except rospy.ROSInterruptException:
         pass
-
-
